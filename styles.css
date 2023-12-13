@@ -1,0 +1,15 @@
+.hidden {
+    display: none;
+}
+
+#sidebar {
+    position: fixed;
+    right: 0;
+    top: 0;
+    width: 900px;
+    height: 100%;
+    background-color: #f3f3f3;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    box-sizing: border-box;
+}

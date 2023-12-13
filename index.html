@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>NewYorkCounty</title>
+    <!--<script src="https://d3js.org/d3.v5.js"></script>-->
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <script src="https://unpkg.com/topojson-client@3"></script>
+    <link rel="stylesheet" type="text/css" href="./styles.css">
+</head>
+
+<body>
+    <!--<select id="county_select"></select>-->
+    <svg id="county_map" width="1000" height="1000"></svg>
+
+    <div id="sidebar" class="hidden">
+        <button id="close_sidebar">Close</button>
+        <h2>County Details</h2>
+        <p id="county_info">Select a county to see details here.</p>
+
+        <svg id="meanCountyTrafficState" width="480" height="400"></svg>
+    </div>
+
+    <script src="index.js"></script>
+</body>
+
+</html>
