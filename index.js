@@ -57,8 +57,9 @@ const render = () => {
 
             // Get the mean traffic county data for the selected data and plot it.
             getCountyData(d.properties.name);
-
             //drawLinePlotMeanTrafficState(countyData);   // render line plot
+            drawStackedBarChart(d.properties.name);
+            
         })
         .on('mouseover', function (event, d) {
             d3.select(this).transition().duration(200)
@@ -134,7 +135,7 @@ function drawLinePlotMeanTrafficState(countyData) {
     // Clear existing content
     d3.select("#meanCountyTrafficState").selectAll("*").remove();
 
-    console.log("ready to plot this data:", countyData);
+    // console.log("ready to plot this data:", countyData);
 
     // Parse the year as a date
     countyData.forEach(d => {
@@ -205,3 +206,69 @@ function getCountyData(countyName) {
 
 }
 
+
+function drawStackedBarChart(countyName){
+    d3.csv("avg_traffic_county_roadstype.csv",d3.autoType).then(function(data){
+        const filteredData = data.filter(row=>row.County===countyName);
+
+        d3.select("#countyStackedBarChart").selectAll("*").remove();
+
+        // Parse the year as a date
+        filteredData.forEach(d => {
+            d.Year = new Date(d.Year, 0, 1); // Convert year to a Date object (January 1st of that year)
+        });
+
+        // Set the dimensions and margins of the graph
+        const margin = { top: 10, right: 30, bottom: 30, left: 60 },
+            width = 460 - margin.left - margin.right,
+            height = 400 - margin.top - margin.bottom;
+
+        // Set up the SVG
+        const svg = d3.select("#countyStackedBarChart")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform",
+                "translate(" + margin.left + "," + margin.top + ")");
+
+        // Set the ranges
+        const x = d3.scaleTime()
+            .domain(d3.extent(filteredData, function (d) { return d.Year; }))
+            .range([0, width]);
+        svg.append("g")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(x));
+
+        const y = d3.scaleLinear()
+            .domain([0, 2*d3.max(filteredData, function (d) { return d.Count })])
+            .range([height, 0]);
+        svg.append("g")
+            .call(d3.axisLeft(y));
+
+        const color = d3.scaleOrdinal()
+            .domain([0,1,2])
+            .range(['#665191','#a05195','#d45087'])
+
+        const stackedData = d3.stack()
+            .keys(d3.union(filteredData.map(d=>d.type)))
+            .value(([,group],key)=>group.get(key).Count)
+            (d3.index(filteredData,d=>d.Year, d=>d.type))
+
+        svg.append("g").selectAll("g")
+            .data(stackedData)
+            .join("g")
+            .attr("fill", d=>color(d.key))
+            .selectAll("rect")
+            .data(d=>{
+            return d
+            })
+            .join("rect")
+            .attr("x", d=>x(d.data[0]))
+            .attr("y", d=>{
+                return y(d[1])
+            })
+            // .attr("height", d=>100)
+            .attr("height", d=>y(d[0])-y(d[1]))
+            .attr("width", 5)
+    })
+}
