@@ -176,15 +176,41 @@ function drawLinePlotMeanTrafficState(countyData) {
         .call(d3.axisLeft(y));
 
     // Add the line
+    // 0： 'State Road'
+    // 1： 'County Road'
+    // 2： 'Other Road'
+    const stateRoad  = countyData.filter(row => row.type === 0);
+    const countyRoad = countyData.filter(row => row.type === 1);
+    const otherRoad  = countyData.filter(row => row.type === 2);
+
+
     svg.append("path")
-        .datum(countyData)
-        .attr("fill", "none")
-        .attr("stroke", "steelblue")
-        .attr("stroke-width", 1.5)
-        .attr("d", d3.line()
-            .x(function (d) { return x(d.Year) })
-            .y(function (d) { return y(d.Count) })
-        )
+    .datum(stateRoad)
+    .attr("fill", "none")
+    .attr("stroke", "red")
+    .attr("stroke-width", 2)
+    .attr("d", d3.line()
+        .x(function (d) { return x(d.Year) })
+        .y(function (d) { return y(d.Count) })
+    )
+    svg.append("path")
+    .datum(countyRoad)
+    .attr("fill", "none")
+    .attr("stroke", "steelblue")
+    .attr("stroke-width", 2)
+    .attr("d", d3.line()
+        .x(function (d) { return x(d.Year) })
+        .y(function (d) { return y(d.Count) })
+    )
+    svg.append("path")
+    .datum(otherRoad)
+    .attr("fill", "none")
+    .attr("stroke", "green")
+    .attr("stroke-width", 2)
+    .attr("d", d3.line()
+        .x(function (d) { return x(d.Year) })
+        .y(function (d) { return y(d.Count) })
+    )
 
 
     // Set up your scales, axes, and line generator
@@ -198,7 +224,7 @@ function drawLinePlotMeanTrafficState(countyData) {
 // Helper function to get the county mean traffic data
 function getCountyData(countyName) {
     // parse csv data. cleaned using python file beforehand
-    d3.csv("clean_mean_traffic.csv", d3.autoType).then(function (data) {
+    d3.csv("avg_traffic_county_roadstype.csv", d3.autoType).then(function (data) {
 
         const filteredData = data.filter(row => row.County === countyName);
 
