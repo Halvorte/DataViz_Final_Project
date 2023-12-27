@@ -56,9 +56,15 @@ const render = () => {
             //const countyData = getCountyData(d.properties.name);    // get county data
 
             // Get the mean traffic county data for the selected data and plot it.
-            getCountyData(d.properties.name);
-            //drawLinePlotMeanTrafficState(countyData);   // render line plot
-            drawStackedBarChart(d.properties.name);
+            if(d.properties.name === "St. Lawrence") {
+                getCountyData("Saint Lawrence");
+                drawStackedBarChart("Saint Lawrence");
+            }
+            else{
+                getCountyData(d.properties.name);
+                drawStackedBarChart(d.properties.name);
+            }
+
             
         })
         .on('mouseover', function (event, d) {
