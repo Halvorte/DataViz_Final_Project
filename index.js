@@ -57,11 +57,13 @@ const render = () => {
 
             // Get the mean traffic county data for the selected data and plot it.
             if(d.properties.name === "St. Lawrence") {
+                drawTable("Saint Lawrence");
                 getCountyData("Saint Lawrence");
                 drawStackedBarChart("Saint Lawrence");
                 drawThemeRiverChart("Saint Lawrence");
             }
             else{
+                drawTable(d.properties.name);
                 getCountyData(d.properties.name);
                 drawStackedBarChart(d.properties.name);
                 drawThemeRiverChart(d.properties.name);
@@ -339,7 +341,7 @@ function drawThemeRiverChart(countyName) {
             }
             d.value = d.Count;
         });
-        console.log("drawThemeRiverChart:",data);
+        // console.log("drawThemeRiverChart:",data);
 
         categories = ["State Road", "County Road", "Other Road"]
         d3.select("#themeRiverChart").selectAll("*").remove();
@@ -367,7 +369,7 @@ function drawThemeRiverChart(countyName) {
                     .value((d, key) => d.values.find(v => v.category === key)?.value || 0);
         const stackedData = stack(groupedData);
 
-        console.log("stackedData:",stackedData);
+        // console.log("stackedData:",stackedData);
 
         const xScale = d3.scaleTime()
                         .domain(d3.extent(data, d => d.Year))
@@ -409,5 +411,59 @@ function drawThemeRiverChart(countyName) {
         legend.append("text").attr("x", 220).attr("y", 130).text("State Road").style("font-size", "15px").attr("alignment-baseline","middle")
         legend.append("text").attr("x", 220).attr("y", 160).text("County Road").style("font-size", "15px").attr("alignment-baseline","middle")
         legend.append("text").attr("x", 220).attr("y", 190).text("other").style("font-size", "15px").attr("alignment-baseline","middle")
+    })
+}
+
+function drawTable(countyName) {
+
+    d3.csv("ListofcountiesinNewYork.csv",d3.autoType).then(function(imputdata){
+        const data = imputdata.filter(row => row.County === countyName + " County");
+
+        console.log("drawTable:",data);
+        // Select the HTML element based on the provided ID
+
+        const table = d3.select("#CountyInfo");
+        table.selectAll("*").remove();  // Clear any existing content
+
+        table.append('table');
+        const thead = table.append('thead');
+        const tbody = table.append('tbody');
+
+        // Extract the column headers
+        const columns = Object.keys(data[0]);
+
+        // Append the header row
+        thead.append('tr')
+            .selectAll('th')
+            .data(columns)
+            .enter()
+            .append('th')
+            .text(column => column);
+
+        // Create a row for each object in the data
+        const rows = tbody.selectAll('tr')
+            .data(data)
+            .enter()
+            .append('tr');
+
+        // Create a cell in each row for each column
+        rows.selectAll('td')
+            .data(row => columns.map(column => ({ column: column, value: row[column] })))
+            .enter()
+            .append('td')
+            .text(d => d.value);
+
+         // Apply styles to the table, th, and td elements
+        table.style('border-collapse', 'collapse')
+        .style('border', '1px solid black');
+
+        thead.selectAll('th')
+            .style('border', '1px solid black')
+            .style('padding', '5px');
+
+        tbody.selectAll('td')
+            .style('border', '1px solid black')
+            .style('padding', '5px');
+
     })
 }
