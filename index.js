@@ -252,9 +252,6 @@ function getCountyData(countyName) {
         // Plot the correlation matrix
         drawTrafficPollutionCorrelationMatrix();
 
-        // Plot the correlation matrix
-        drawTrafficPollutionCorrelationMatrix();
-
     });
 
 }
@@ -425,6 +422,7 @@ function drawThemeRiverChart(countyName) {
         legend.append("text").attr("x", 220).attr("y", 190).text("other").style("font-size", "15px").attr("alignment-baseline","middle")
     })
 };
+
 
 // Helper function to do Pearson calculations for the correlation matrix
 // Helper function to calculate Pearson correlations
