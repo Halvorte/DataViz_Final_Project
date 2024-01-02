@@ -151,7 +151,7 @@ function drawLinePlotMeanTrafficState(countyData) {
 
     // Set the dimensions and margins of the graph
     const margin = { top: 10, right: 30, bottom: 30, left: 60 },
-        width = 460 - margin.left - margin.right,
+        width = 480 - margin.left - margin.right,
         height = 400 - margin.top - margin.bottom;
 
     // Set up the SVG
@@ -212,6 +212,14 @@ function drawLinePlotMeanTrafficState(countyData) {
         .y(function (d) { return y(d.Count) })
     )
 
+    const legend = d3.select("#meanCountyTrafficState_legend")        
+    legend.append("circle").attr("cx",200).attr("cy",130).attr("r", 6).style("fill", "#665191")
+    legend.append("circle").attr("cx",200).attr("cy",160).attr("r", 6).style("fill", "#a05195")
+    legend.append("circle").attr("cx",200).attr("cy",190).attr("r", 6).style("fill", "#d45087")
+    legend.append("text").attr("x", 220).attr("y", 130).text("State Route").style("font-size", "15px").attr("alignment-baseline","middle")
+    legend.append("text").attr("x", 220).attr("y", 160).text("County Road").style("font-size", "15px").attr("alignment-baseline","middle")
+    legend.append("text").attr("x", 220).attr("y", 190).text("other").style("font-size", "15px").attr("alignment-baseline","middle")
+    
 
     // Set up your scales, axes, and line generator
     // This depends on the format of your data and your specific needs
@@ -251,7 +259,7 @@ function drawStackedBarChart(countyName){
 
         // Set the dimensions and margins of the graph
         const margin = { top: 10, right: 30, bottom: 30, left: 60 },
-            width = 460 - margin.left - margin.right,
+            width = 480 - margin.left - margin.right,
             height = 400 - margin.top - margin.bottom;
 
         // Set up the SVG
@@ -301,6 +309,15 @@ function drawStackedBarChart(countyName){
             // .attr("height", d=>100)
             .attr("height", d=>y(d[0])-y(d[1]))
             .attr("width", 5)
+
+        const legend = d3.select("#countyStackedBarChart_legend")        
+        legend.append("circle").attr("cx",200).attr("cy",130).attr("r", 6).style("fill", "#665191")
+        legend.append("circle").attr("cx",200).attr("cy",160).attr("r", 6).style("fill", "#a05195")
+        legend.append("circle").attr("cx",200).attr("cy",190).attr("r", 6).style("fill", "#d45087")
+        legend.append("text").attr("x", 220).attr("y", 130).text("State Route").style("font-size", "15px").attr("alignment-baseline","middle")
+        legend.append("text").attr("x", 220).attr("y", 160).text("County Road").style("font-size", "15px").attr("alignment-baseline","middle")
+        legend.append("text").attr("x", 220).attr("y", 190).text("other").style("font-size", "15px").attr("alignment-baseline","middle")
+
     })
 }
 
@@ -328,7 +345,7 @@ function drawThemeRiverChart(countyName) {
         d3.select("#themeRiverChart").selectAll("*").remove();
 
         const margin = { top: 10, right: 30, bottom: 30, left: 60 },
-            width = 460 - margin.left - margin.right,
+            width = 480 - margin.left - margin.right,
             height = 400 - margin.top - margin.bottom;
 
         const svg = d3.select("#themeRiverChart")
@@ -384,5 +401,13 @@ function drawThemeRiverChart(countyName) {
 
         svg.append("g")
             .call(d3.axisLeft(yScale));
+        
+        const legend = d3.select("#themeRiverChart_legend")        
+        legend.append("circle").attr("cx",200).attr("cy",130).attr("r", 6).style("fill", "#665191")
+        legend.append("circle").attr("cx",200).attr("cy",160).attr("r", 6).style("fill", "#a05195")
+        legend.append("circle").attr("cx",200).attr("cy",190).attr("r", 6).style("fill", "#d45087")
+        legend.append("text").attr("x", 220).attr("y", 130).text("State Route").style("font-size", "15px").attr("alignment-baseline","middle")
+        legend.append("text").attr("x", 220).attr("y", 160).text("County Road").style("font-size", "15px").attr("alignment-baseline","middle")
+        legend.append("text").attr("x", 220).attr("y", 190).text("other").style("font-size", "15px").attr("alignment-baseline","middle")
     })
 }

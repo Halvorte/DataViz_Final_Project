@@ -17,10 +17,25 @@
         <button id="close_sidebar">Close</button>
         <h2>County Details</h2>
         <p id="county_info">Select a county to see details here.</p>
+        
+        <h3 class="title">Line Graph</h3>
+        <div class="legend-group">
+            <svg id="meanCountyTrafficState" width="480" height="400"></svg>
+            <svg id="meanCountyTrafficState_legend"></svg>
+        </div>
 
-        <svg id="meanCountyTrafficState" width="480" height="400"></svg>
-        <svg id="countyStackedBarChart" width="480" height="400"></svg>
-        <svg id="themeRiverChart" width="480" height="400"></svg>
+        <h3 class="title">Stacked Bar Chart</h3>
+        <div class="legend-group">
+            <svg id="countyStackedBarChart" width="480" height="400"></svg>
+            <svg id="countyStackedBarChart_legend"></svg>
+        </div>
+        
+        <h3 class="title">ThemeRiver</h3>
+        <div class="legend-group">
+            <svg id="themeRiverChart" width="480" height="400"></svg>
+            <svg id="themeRiverChart_legend"></svg>
+        </div>
+        
     </div>
 
     <script src="./index.js"></script>
