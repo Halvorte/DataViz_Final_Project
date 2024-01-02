@@ -183,11 +183,10 @@ function drawLinePlotMeanTrafficState(countyData) {
     const countyRoad = countyData.filter(row => row.type === 1);
     const otherRoad  = countyData.filter(row => row.type === 2);
 
-
     svg.append("path")
     .datum(stateRoad)
     .attr("fill", "none")
-    .attr("stroke", "red")
+    .attr("stroke", "#665191")
     .attr("stroke-width", 2)
     .attr("d", d3.line()
         .x(function (d) { return x(d.Year) })
@@ -196,7 +195,7 @@ function drawLinePlotMeanTrafficState(countyData) {
     svg.append("path")
     .datum(countyRoad)
     .attr("fill", "none")
-    .attr("stroke", "steelblue")
+    .attr("stroke", "#a05195")
     .attr("stroke-width", 2)
     .attr("d", d3.line()
         .x(function (d) { return x(d.Year) })
@@ -205,7 +204,7 @@ function drawLinePlotMeanTrafficState(countyData) {
     svg.append("path")
     .datum(otherRoad)
     .attr("fill", "none")
-    .attr("stroke", "green")
+    .attr("stroke", "#d45087")
     .attr("stroke-width", 2)
     .attr("d", d3.line()
         .x(function (d) { return x(d.Year) })
