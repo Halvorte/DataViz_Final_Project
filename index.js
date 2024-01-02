@@ -64,7 +64,7 @@ const render = () => {
 
             // Get the mean traffic county data for the selected data and plot it.
             if(d.properties.name === "St. Lawrence") {
-                drawTable("Saint Lawrence");
+                drawTable(d.properties.name);
                 getCountyData("Saint Lawrence");
                 drawStackedBarChart("Saint Lawrence");
                 drawThemeRiverChart("Saint Lawrence");
@@ -559,7 +559,7 @@ function drawTrafficPollutionCorrelationMatrix() {
 
 function drawTable(countyName) {
 
-    d3.csv("ListofcountiesinNewYork.csv",d3.autoType).then(function(imputdata){
+    d3.csv("List-of-counties-in-NewYork.csv",d3.autoType).then(function(imputdata){
         const data = imputdata.filter(row => row.County === countyName + " County");
 
         console.log("drawTable:",data);
