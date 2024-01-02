@@ -14,3 +14,12 @@
     box-sizing: border-box;
     overflow-y: scroll;
 }
+
+.legend-group {
+    display: flex;
+    flex-direction: row;
+}
+
+.title {
+    margin-left: 200px;
+}
