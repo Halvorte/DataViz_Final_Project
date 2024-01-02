@@ -59,10 +59,12 @@ const render = () => {
             if(d.properties.name === "St. Lawrence") {
                 getCountyData("Saint Lawrence");
                 drawStackedBarChart("Saint Lawrence");
+                drawThemeRiverChart("Saint Lawrence");
             }
             else{
                 getCountyData(d.properties.name);
                 drawStackedBarChart(d.properties.name);
+                drawThemeRiverChart(d.properties.name);
             }
 
             
@@ -134,7 +136,6 @@ d3.json('https://d3js.org/us-10m.v2.json').then((data) => {
 d3.csv("clean_mean_traffic.csv", d3.autoType).then(function (data) {
     console.log(data);
 });
-
 
 // helper function to plot line plot for the mean county traffic data
 function drawLinePlotMeanTrafficState(countyData) {
@@ -237,7 +238,6 @@ function getCountyData(countyName) {
 
 }
 
-
 function drawStackedBarChart(countyName){
     d3.csv("avg_traffic_county_roadstype.csv",d3.autoType).then(function(data){
         const filteredData = data.filter(row=>row.County===countyName);
@@ -301,5 +301,88 @@ function drawStackedBarChart(countyName){
             // .attr("height", d=>100)
             .attr("height", d=>y(d[0])-y(d[1]))
             .attr("width", 5)
+    })
+}
+
+function drawThemeRiverChart(countyName) {
+
+    d3.csv("avg_traffic_county_roadstype.csv",d3.autoType).then(function(imputdata){
+
+        const data = imputdata.filter(row => row.County === countyName);
+
+        data.forEach(d => {
+            if(d.type === 0) {
+                d.category = "State Road";
+            }
+            else if(d.type === 1) {
+                d.category = "County Road";
+            }
+            else if(d.type === 2) {
+                d.category = "Other Road";
+            }
+            d.value = d.Count;
+        });
+        console.log("drawThemeRiverChart:",data);
+
+        categories = ["State Road", "County Road", "Other Road"]
+        d3.select("#themeRiverChart").selectAll("*").remove();
+
+        const margin = { top: 10, right: 30, bottom: 30, left: 60 },
+            width = 460 - margin.left - margin.right,
+            height = 400 - margin.top - margin.bottom;
+
+        const svg = d3.select("#themeRiverChart")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform",
+                "translate(" + margin.left + "," + margin.top + ")");
+
+        data.forEach(d => {
+            d.Year = d3.timeParse("%Y")(d.Year); // Adjust the format as per your data
+        });
+
+        const groupedData = Array.from(d3.group(data, d => d.Year), ([key, value]) => ({ date: key, values: value }));
+
+
+        const stack = d3.stack()
+                    .keys(categories)
+                    .value((d, key) => d.values.find(v => v.category === key)?.value || 0);
+        const stackedData = stack(groupedData);
+
+        console.log("stackedData:",stackedData);
+
+        const xScale = d3.scaleTime()
+                        .domain(d3.extent(data, d => d.Year))
+                        .range([0, width]);
+        
+        const yScale = d3.scaleLinear()
+                        .domain([d3.min(stackedData, layer => d3.min(layer, d => d[0])), 
+                                d3.max(stackedData, layer => d3.max(layer, d => d[1]))])
+                        .range([height, 0]);
+
+        const colorScale = d3.scaleOrdinal()
+            .domain(categories)
+            .range(['#665191', '#a05195', '#d45087']);
+
+        const area = d3.area()
+                    .x(d => xScale(d.data.date))
+                    .y0(d => yScale(d[0]))
+                    .y1(d => yScale(d[1]));
+
+        svg.selectAll(".layer")
+        .data(stackedData)
+        .enter().append("path")
+            .attr("class", "layer")
+            .attr("d", area)
+            .style("fill", (d, i) => colorScale(i));
+
+        // 9. Add Axes
+        svg.append("g")
+        .attr("transform", `translate(0,${height})`)
+        .call(d3.axisBottom(xScale));
+
+        svg.append("g")
+            .call(d3.axisLeft(yScale));
     })
 }
