@@ -3,6 +3,13 @@ let selectedStateId = "36"; // select New York State
 let width = 500;
 let height = 500;
 
+// Correlation matrix color scale
+const corrMatrixColorScale = d3.scaleLinear()
+    .domain([0, 1])  // Input values
+    .range(["#44ffb0", "#07301e"])  // Output colors
+    .clamp(true);  // Limit output to the defined range
+
+
 const render = () => {
     let countiesData = topojson.feature(usData, usData.objects.counties).features;
     let stateData = topojson.feature(usData, usData.objects.states).features.filter((d) => d.id === selectedStateId);
@@ -201,7 +208,142 @@ function getCountyData(countyName) {
         // Plot the line plot
         drawLinePlotMeanTrafficState(filteredData);
 
+        // Plot the correlation matrix
+        drawTrafficPollutionCorrelationMatrix();
+
     });
 
 }
 
+// Helper function to do Pearson calculations for the correlation matrix
+// Helper function to calculate Pearson correlations
+function pearsonCorrelation(arrX, arrY) {
+    // Check that the arrays are of the same size
+    if (arrX.length != arrY.length) {
+        throw new Error("Arrays does not have same length")
+    }
+
+    const meanX = arrX.reduce((a, b) => a + b, 0) / arrX.length;
+    const meanY = arrY.reduce((a, b) => a + b, 0) / arrY.length;
+
+    const devX = arrX.map(x => x - meanX);
+    const devY = arrY.map(y => y - meanY);
+
+    const devProduct = devX.map((x, i) => x * devY[i]);
+
+    const sumDevProduct = devProduct.reduce((a, b) => a + b, 0);
+    const sumSquaresX = devX.map(x => x ** 2).reduce((a, b) => a + b, 0);
+    const sumSquaresY = devY.map(y => y ** 2).reduce((a, b) => a + b, 0);
+
+    const r = sumDevProduct / Math.sqrt(sumSquaresX * sumSquaresY);
+
+    return r;
+};
+
+// Helper function to calculate the correlation matrix
+function calculateCorrelationMatrix(data) {
+    let correlationMatrix = [];
+
+    // Step 1. Create an array of data
+    let yearArr = data.map(d => d.Year);
+    let countArr = data.map(d => d.Count);
+    let pm25Arr = data.map(d => d.pm25);
+
+    let variables = [yearArr, countArr, pm25Arr];
+
+    // Step 2. Calculate correlation matrix
+    for (let i = 0; i < variables.length; i++) {
+        correlationMatrix[i] = [];
+
+        for (let j = 0; j < variables.length; j++) {
+            correlationMatrix[i][j] = pearsonCorrelation(variables[i], variables[j]);
+        };
+    };
+
+    return correlationMatrix;
+};
+
+// Helper function that plots the correlation matrix
+function renderCorrelationMatrix(matrix) {
+    // remove previous plot before plotting new one
+    d3.select("#pollutionTrafficcorrelationMatrix").selectAll("*").remove();
+
+    let variableNames = ['Year', 'Count', 'pm25'];
+    //let variableNames = [yearArr, countArr, pm25Arr]
+
+    // Set the dimensions and margins of the graph
+    const matrixMargin = { top: 60, right: 30, bottom: 30, left: 30 },
+        matrixWidth = 460 - matrixMargin.left - matrixMargin.right,
+        matrixHeight = 400 - matrixMargin.top - matrixMargin.bottom;
+
+    // Set up the SVG
+    const matrixSvg = d3.select("#pollutionTrafficcorrelationMatrix")
+        .attr("width", matrixWidth + matrixMargin.left + matrixMargin.right)
+        .attr("height", matrixHeight + matrixMargin.top + matrixMargin.bottom)
+        .append("g")
+        .attr("transform",
+            "translate(" + matrixMargin.left + "," + matrixMargin.top + ")");
+
+    // Add title to the correlation matrix
+    matrixSvg.append("text")
+        .attr("x", matrixWidth / 2)
+        .attr("y", 0 - (matrixMargin.top / 2))
+        .attr("text-anchor", "middle")
+        //.style("class", "text-title")
+        .classed("text-title", true)
+        .text(`Correlation Matrix for State Yearly Average Traffic and PM25-Pollution`);
+
+    // Create the x and y scale
+    const xScale = d3.scaleBand().domain(variableNames).range([0, matrixWidth]);
+    const yScale = d3.scaleBand().domain(variableNames).range([0, matrixHeight]);
+
+    // add top-axis and labels
+    matrixSvg.append('g')
+        .call(d3.axisTop(xScale))
+        .selectAll("text")
+        .classed("axis-label", true);
+    // add left-axis and labels
+    matrixSvg.append('g')
+        .call(d3.axisLeft(yScale))
+        .selectAll("text")
+        .classed("axis-label", true);
+
+    // Render the heatmap
+    const rect = matrixSvg.selectAll("rect")
+        .data(matrix.flat())
+        .join("rect")
+        .attr("x", (d, i) => xScale(variableNames[i % variableNames.length]))
+        .attr("y", (d, i) => yScale(variableNames[Math.floor(i / variableNames.length)]))
+        .attr("width", xScale.bandwidth())
+        .attr("height", yScale.bandwidth())
+        .attr("fill", d => corrMatrixColorScale(d))
+        .append("title") // Adding tooltips
+        .text(d => d);
+
+    // Add the correlation number to each rectangle
+    matrixSvg.selectAll("text.correlation")
+        .data(matrix.flat())
+        .join("text") // Appends text element for each data point
+        //.attr("class", "text-label")
+        .classed("text-label", true)
+        .attr("x", (d, i) => xScale(variableNames[i % variableNames.length]) + xScale.bandwidth() / 2)
+        .attr("y", (d, i) => yScale(variableNames[Math.floor(i / variableNames.length)]) + yScale.bandwidth() / 2)
+        .attr("dy", "0.35em") // to vertically center
+        .attr("text-anchor", "middle")
+        .text(d => d.toFixed(2));  // round to two decimal places
+
+};
+
+function drawTrafficPollutionCorrelationMatrix() {
+    console.log("Ready to plot correlation matrix")
+    // parse csv data. cleaned using python file beforehand
+    d3.csv("combined_data.csv", d3.autoType).then(function (data) {
+        // Make the correlation matrix
+        let matrix = calculateCorrelationMatrix(data);
+        console.log("correlation matrix", matrix);
+
+        // Plot the correlation matrix
+        renderCorrelationMatrix(matrix);
+
+    });
+}
