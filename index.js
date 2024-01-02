@@ -216,7 +216,7 @@ function drawLinePlotMeanTrafficState(countyData) {
     legend.append("circle").attr("cx",200).attr("cy",130).attr("r", 6).style("fill", "#665191")
     legend.append("circle").attr("cx",200).attr("cy",160).attr("r", 6).style("fill", "#a05195")
     legend.append("circle").attr("cx",200).attr("cy",190).attr("r", 6).style("fill", "#d45087")
-    legend.append("text").attr("x", 220).attr("y", 130).text("State Route").style("font-size", "15px").attr("alignment-baseline","middle")
+    legend.append("text").attr("x", 220).attr("y", 130).text("State Road").style("font-size", "15px").attr("alignment-baseline","middle")
     legend.append("text").attr("x", 220).attr("y", 160).text("County Road").style("font-size", "15px").attr("alignment-baseline","middle")
     legend.append("text").attr("x", 220).attr("y", 190).text("other").style("font-size", "15px").attr("alignment-baseline","middle")
     
@@ -314,7 +314,7 @@ function drawStackedBarChart(countyName){
         legend.append("circle").attr("cx",200).attr("cy",130).attr("r", 6).style("fill", "#665191")
         legend.append("circle").attr("cx",200).attr("cy",160).attr("r", 6).style("fill", "#a05195")
         legend.append("circle").attr("cx",200).attr("cy",190).attr("r", 6).style("fill", "#d45087")
-        legend.append("text").attr("x", 220).attr("y", 130).text("State Route").style("font-size", "15px").attr("alignment-baseline","middle")
+        legend.append("text").attr("x", 220).attr("y", 130).text("State Road").style("font-size", "15px").attr("alignment-baseline","middle")
         legend.append("text").attr("x", 220).attr("y", 160).text("County Road").style("font-size", "15px").attr("alignment-baseline","middle")
         legend.append("text").attr("x", 220).attr("y", 190).text("other").style("font-size", "15px").attr("alignment-baseline","middle")
 
@@ -406,7 +406,7 @@ function drawThemeRiverChart(countyName) {
         legend.append("circle").attr("cx",200).attr("cy",130).attr("r", 6).style("fill", "#665191")
         legend.append("circle").attr("cx",200).attr("cy",160).attr("r", 6).style("fill", "#a05195")
         legend.append("circle").attr("cx",200).attr("cy",190).attr("r", 6).style("fill", "#d45087")
-        legend.append("text").attr("x", 220).attr("y", 130).text("State Route").style("font-size", "15px").attr("alignment-baseline","middle")
+        legend.append("text").attr("x", 220).attr("y", 130).text("State Road").style("font-size", "15px").attr("alignment-baseline","middle")
         legend.append("text").attr("x", 220).attr("y", 160).text("County Road").style("font-size", "15px").attr("alignment-baseline","middle")
         legend.append("text").attr("x", 220).attr("y", 190).text("other").style("font-size", "15px").attr("alignment-baseline","middle")
     })
