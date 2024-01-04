@@ -5,9 +5,10 @@ let height = 500;
 
 // Correlation matrix color scale
 const corrMatrixColorScale = d3.scaleLinear()
-    .domain([0, 1])  // Input values
-    .range(["#44ffb0", "#07301e"])  // Output colors
-    .clamp(true);  // Limit output to the defined range
+    .domain([0, 1])                     // Input values
+    //.range(["#44ffb0", "#07301e"])    // Output colors
+    .range(["#003f5c", "#ffa600"])      // Changed the colors to be the specified colors
+    .clamp(true);                       // Limit output to the defined range
 
 
 const render = () => {
@@ -458,7 +459,9 @@ function calculateCorrelationMatrix(data) {
     let countArr = data.map(d => d.Count);
     let pm25Arr = data.map(d => d.pm25);
 
-    let variables = [yearArr, countArr, pm25Arr];
+    //let variables = [yearArr, countArr, pm25Arr];
+    let variables = [countArr, pm25Arr];
+
 
     // Step 2. Calculate correlation matrix
     for (let i = 0; i < variables.length; i++) {
@@ -477,11 +480,12 @@ function renderCorrelationMatrix(matrix) {
     // remove previous plot before plotting new one
     d3.select("#pollutionTrafficcorrelationMatrix").selectAll("*").remove();
 
-    let variableNames = ['Year', 'Count', 'pm25'];
+    //let variableNames = ['Year', 'Count', 'pm25'];
+    let variableNames = ['Count', 'pm25'];
     //let variableNames = [yearArr, countArr, pm25Arr]
 
     // Set the dimensions and margins of the graph
-    const matrixMargin = { top: 60, right: 30, bottom: 30, left: 30 },
+    const matrixMargin = { top: 60, right: 30, bottom: 30, left: 60 },
         matrixWidth = 460 - matrixMargin.left - matrixMargin.right,
         matrixHeight = 400 - matrixMargin.top - matrixMargin.bottom;
 
